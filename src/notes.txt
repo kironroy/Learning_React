@@ -37,3 +37,10 @@ Instead, you will describe the UI you want to see for the different visual state
 and then trigger the state changes in response to user input. This is similar to how designers think about UI.
 
  Components are used to render, manage, and update the UI elements in your application. Let’s look at the component line by line to see what’s going on:
+
+
+ As a next step, you want the Square component to “remember” that it got clicked, and fill it with an “X” mark. To “remember” things, components use state.
+
+React provides a special function called useState that you can call from your component to let it “remember” things. Let’s store the current value of the Square in state, and change it when the Square is clicked.
+
+Import useState at the top of the file. Remove the value prop from the Square component. Instead, add a new line at the start of the Square that calls useState. Have it return a state variable called value:
