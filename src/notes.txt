@@ -44,3 +44,19 @@ and then trigger the state changes in response to user input. This is similar to
 React provides a special function called useState that you can call from your component to let it “remember” things. Let’s store the current value of the Square in state, and change it when the Square is clicked.
 
 Import useState at the top of the file. Remove the value prop from the Square component. Instead, add a new line at the start of the Square that calls useState. Have it return a state variable called value:
+
+
+ function handleClick(i) {
+    const nextSquares = squares.slice();
+    nextSquares[i] = "✖️";
+    setSquares(nextSquares);
+  }
+
+Why immutability is important 
+Note how in handleClick, you call .slice() to create a copy of the squares array instead of modifying the existing array. To explain why, we need to discuss immutability and why immutability is important to learn.
+
+There are generally two approaches to changing data. The first approach is to mutate the data by directly changing the data’s values. The second approach is to replace the data with a new copy which has the desired changes. Here is what it would look like if you mutated the squares array:
+
+const squares = [null, null, null, null, null, null, null, null, null];
+squares[0] = 'X';
+// Now `squares` is ["X", null, null, null, null, null, null, null, null];
