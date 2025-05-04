@@ -16,10 +16,11 @@ import "./reactStyle.css";
 // import TeaGathering from "./TeaGathering";
 // import AppTwo from "./AppTwo.jsx";
 // import Quiz from "./Quiz.jsx";
-import FullName from "./FullName.jsx";
+// import FullName from "./FullName.jsx";
+import Accordian from "./Accordian.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <FullName/>
+    <Accordian />
   </StrictMode>
 );
