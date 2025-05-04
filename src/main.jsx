@@ -17,10 +17,10 @@ import "./reactStyle.css";
 // import AppTwo from "./AppTwo.jsx";
 // import Quiz from "./Quiz.jsx";
 // import FullName from "./FullName.jsx";
-import Accordian from "./Accordian.jsx";
+import Accordion from "./Accordion.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <Accordian />
+    <Accordion />
   </StrictMode>
 );

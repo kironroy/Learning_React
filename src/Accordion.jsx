@@ -86,3 +86,11 @@ function Panel({ title, children, isActive, onShow }) {
 // ✅ Receives props (title, children, isActive, onShow).
 
 // ✅ Displays either content (children) or a button.
+
+// Lifting state up often changes the nature of what you’re storing as state.
+
+// In this case, only one panel should be active at a time. 
+// This means that the Accordion common parent component needs to 
+// keep track of which panel is the active one. 
+// Instead of a boolean value, it could use a number as the index 
+// of the active Panel for the state variable:
