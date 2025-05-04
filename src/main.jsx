@@ -15,10 +15,11 @@ import "./reactStyle.css";
 // import RecipeList from "./Recipes.jsx";
 // import TeaGathering from "./TeaGathering";
 // import AppTwo from "./AppTwo.jsx";
+// import Quiz from "./Quiz.jsx";
+import FullName from "./FullName.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <>
-    </>
+    <FullName/>
   </StrictMode>
 );
