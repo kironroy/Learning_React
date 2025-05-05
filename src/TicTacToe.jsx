@@ -23,7 +23,6 @@ export default function Board() {
   //   setSquares(nextSquares);
   //   setXIsNext(!xIsNext);
   // }
-
   function calculateWinner(squares) {
     const lines = [
       [0, 1, 2],
@@ -35,17 +34,15 @@ export default function Board() {
       [0, 4, 8],
       [2, 4, 6],
     ];
-    for (let i = 0; i < lines.length; i++) {
-      const [a, b, c] = lines[i];
-      if (
-        squares[a] &&
-        squares[a] === squares[b] &&
-        squares[a] === squares[c]
-      ) {
-        return squares[a];
-      }
-    }
-    return null;
+
+    // Find the first matching winning condition
+    const winningLine = lines.find(
+      ([a, b, c]) =>
+        squares[a] && squares[a] === squares[b] && squares[a] === squares[c]
+    );
+
+    // Return the winning symbol or null if no match
+    return winningLine ? squares[winningLine[0]] : null;
   }
 
   function handleClick(i) {
@@ -62,11 +59,7 @@ export default function Board() {
   }
   const winner = calculateWinner(squares);
   let status;
-  if (winner) {
-    status = "Winner: " + winner;
-  } else {
-    status = "Next player: " + (xIsNext ? "X" : "O");
-  }
+  status = winner ? `Winner: ${winner}` : `Next player: ${xIsNext ? "X" : "O"}`;
 
   return (
     <>
