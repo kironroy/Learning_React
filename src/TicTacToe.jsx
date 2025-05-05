@@ -83,3 +83,5 @@ export default function Board() {
     </>
   );
 }
+
+// Add history functionality
