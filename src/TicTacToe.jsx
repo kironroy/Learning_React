@@ -1,45 +1,47 @@
-import { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 
-function Square({ value, onSquareClick }) {
+// 1. Wrap Square with React.memo to prevent unnecessary re-renders.
+// It will only re-render if its props change.
+const Square = React.memo(function Square({ value, onSquareClick }) {
   return (
     <button className="square" onClick={onSquareClick}>
       {value}
     </button>
   );
-}
+});
 
 function Board({ xIsNext, squares, onPlay }) {
-  function handleClick(i) {
-    if (calculateWinner(squares) || squares[i]) {
-      return;
-    }
-    const nextSquares = squares.slice();
-    nextSquares[i] = xIsNext ? "✖️" : "⭕";
-    onPlay(nextSquares);
-  }
+  // 2. Memoize the winner calculation so it only updates when squares change.
+  const winner = useMemo(() => calculateWinner(squares), [squares]);
+  const status = winner
+    ? `Winner: ${winner}`
+    : `Next player: ${xIsNext ? "X" : "O"}`;
 
-  const winner = calculateWinner(squares);
-  let status;
-  status = winner ? `Winner: ${winner}` : `Next player: ${xIsNext ? "X" : "O"}`;
+  // 3. Memoize the handleClick function using useCallback.
+  // This prevents recreating the function on every render.
+  const handleClick = useCallback(
+    (i) => {
+      if (winner || squares[i]) return;
+      const nextSquares = squares.slice();
+      nextSquares[i] = xIsNext ? "✖️" : "⭕";
+      onPlay(nextSquares);
+    },
+    [winner, squares, xIsNext, onPlay]
+  );
+
+  // 4. Dynamically generate board rows.
+  const renderSquare = (i) => (
+    <Square key={i} value={squares[i]} onSquareClick={() => handleClick(i)} />
+  );
 
   return (
     <>
       <div className="status">{status}</div>
-      <div className="board-row">
-        <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
-        <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
-        <Square value={squares[2]} onSquareClick={() => handleClick(2)} />
-      </div>
-      <div className="board-row">
-        <Square value={squares[3]} onSquareClick={() => handleClick(3)} />
-        <Square value={squares[4]} onSquareClick={() => handleClick(4)} />
-        <Square value={squares[5]} onSquareClick={() => handleClick(5)} />
-      </div>
-      <div className="board-row">
-        <Square value={squares[6]} onSquareClick={() => handleClick(6)} />
-        <Square value={squares[7]} onSquareClick={() => handleClick(7)} />
-        <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
-      </div>
+      {[0, 1, 2].map((row) => (
+        <div key={row} className="board-row">
+          {[0, 1, 2].map((col) => renderSquare(row * 3 + col))}
+        </div>
+      ))}
     </>
   );
 }
@@ -50,28 +52,39 @@ export default function Game() {
   const [currentMove, setCurrentMove] = useState(0);
   const currentSquares = history[currentMove];
 
-  function handlePlay(nextSquares) {
-    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
-    setHistory(nextHistory);
-    setCurrentMove(nextHistory.length - 1);
-    setXIsNext(!xIsNext);
-  }
+  // 5. Use useCallback to memoize handlePlay and jumpTo.
+  const handlePlay = useCallback(
+    (nextSquares) => {
+      const nextHistory = history
+        .slice(0, currentMove + 1)
+        .concat([nextSquares]);
+      setHistory(nextHistory);
+      setCurrentMove(nextHistory.length - 1);
+      // Using functional update for state changes that depend on previous state.
+      setXIsNext((prevXIsNext) => !prevXIsNext);
+    },
+    [history, currentMove]
+  );
 
-  function jumpTo(nextMove) {
+  const jumpTo = useCallback((nextMove) => {
     setCurrentMove(nextMove);
     setXIsNext(nextMove % 2 === 0);
-  }
+  }, []);
 
-  const moves = history.map((squares, move) => {
-    let description;
-    description = move > 0 ? `Go to move #${move}` : "Go to game start";
-
-    return (
-      <li key={move}>
-        <button onClick={() => jumpTo(move)}>{description}</button>
-      </li>
-    );
-  });
+  // 6. Memoize the moves list to avoid recalculating on every render.
+  const moves = useMemo(
+    () =>
+      history.map((squares, move) => {
+        const description =
+          move > 0 ? `Go to move #${move}` : "Go to game start";
+        return (
+          <li key={move}>
+            <button onClick={() => jumpTo(move)}>{description}</button>
+          </li>
+        );
+      }),
+    [history, jumpTo]
+  );
 
   return (
     <div className="game">
